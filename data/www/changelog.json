@@ -1,0 +1,10 @@
+[
+  { "versao": "0.8.0", "data": "2026-10-30", "mudancas": ["Testes unitários da lógica pura", "README, arquitetura, roteiro de testes e checklist do TDE", "Revisão final: correções de concorrência e de atribuição de empréstimos"] },
+  { "versao": "0.7.0", "data": "2026-10-30", "mudancas": ["Uso de CPU por run-time stats do FreeRTOS", "Métricas de memória, flash e tasks", "Light Sleep, Deep Sleep e modo econômico", "OTA com validação e rollback"] },
+  { "versao": "0.6.0", "data": "2026-10-30", "mudancas": ["Páginas Dashboard, Performance, Admin, Sobre e Changelog", "Chart.js embarcado, sem CDN"] },
+  { "versao": "0.5.0", "data": "2026-10-30", "mudancas": ["Wi-Fi com queda para AP e portal", "NTP", "API REST, WebSocket e login"] },
+  { "versao": "0.4.0", "data": "2026-10-30", "mudancas": ["Usuários, eventos, histórico de 24 h e 7 dias", "Logs circulares persistentes", "Empréstimos ativos sobrevivem a reset"] },
+  { "versao": "0.3.0", "data": "2026-10-30", "mudancas": ["Tasks por core, filas e máquina de estados"] },
+  { "versao": "0.2.0", "data": "2026-10-30", "mudancas": ["Drivers de PN532, OLED, servo, LEDs, buzzer e sensores com debounce"] },
+  { "versao": "0.1.0", "data": "2026-10-30", "mudancas": ["Esqueleto do projeto, partições, pinagem, configurações e logger"] }
+]

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armário · Dashboard</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav></nav>
+<main>
+  <h1>Uso do armário</h1>
+  <div class="grid">
+    <section class="card"><h2>Estado atual</h2><dl id="status"></dl></section>
+    <section class="card"><h2>Notebooks</h2><div class="scroll"><table><thead><tr><th>Slot</th><th>Situação</th><th>Com quem</th><th>Desde</th></tr></thead><tbody id="slots"></tbody></table></div></section>
+  </div>
+  <section class="card" style="margin-bottom:14px"><div class="kpis" id="kpis"></div></section>
+  <div class="grid">
+    <section class="card"><h2>Retiradas por hora do dia</h2><div class="chart"><canvas id="cHour"></canvas></div></section>
+    <section class="card"><h2>Retiradas por dia da semana</h2><div class="chart"><canvas id="cDay"></canvas></div></section>
+    <section class="card"><h2>Notebooks em uso: 24 horas</h2><div class="chart"><canvas id="c24"></canvas></div></section>
+    <section class="card"><h2>Notebooks em uso: 7 dias</h2><div class="chart"><canvas id="c7d"></canvas></div></section>
+    <section class="card"><h2>Quem mais retira</h2><table><thead><tr><th>Usuário</th><th class="num">Retiradas</th></tr></thead><tbody id="ranking"></tbody></table></section>
+    <section class="card"><h2>Últimos eventos</h2><div class="scroll"><table><thead><tr><th>Quando</th><th>Evento</th><th>Slot</th><th>Usuário</th></tr></thead><tbody id="events"></tbody></table></div></section>
+  </div>
+</main>
+<script src="js/chart.js"></script><script src="js/app.js"></script><script src="js/dashboard.js"></script>
+</body>
+</html>

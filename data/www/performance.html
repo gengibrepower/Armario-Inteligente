@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armário · Performance</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav></nav>
+<main>
+  <h1>Performance</h1>
+  <section class="card" style="margin-bottom:14px"><div class="kpis" id="kpis"></div></section>
+  <div class="grid">
+    <section class="card"><h2>CPU por core (últimos 2 min)</h2><div class="chart"><canvas id="cCpu"></canvas></div></section>
+    <section class="card"><h2>Heap livre (últimos 2 min)</h2><div class="chart"><canvas id="cHeap"></canvas></div></section>
+    <section class="card"><h2>Memória</h2><dl id="mem"></dl></section>
+    <section class="card"><h2>Flash</h2><dl id="flash"></dl></section>
+    <section class="card"><h2>Wi-Fi</h2><dl id="wifi"></dl></section>
+    <section class="card"><h2>Sensores: último valor</h2><dl id="sensors"></dl></section>
+    <section class="card wide"><h2>Tempo de execução das funções principais</h2><div class="scroll"><table><thead><tr><th>Função</th><th class="num">Média (µs)</th><th class="num">Mín</th><th class="num">Máx</th><th class="num">Última</th><th class="num">Chamadas</th></tr></thead><tbody id="prof"></tbody></table></div></section>
+    <section class="card wide"><h2 id="tasksTitle">Tasks</h2><div class="scroll"><table><thead><tr><th>Nome</th><th class="num">Core</th><th class="num">Prior.</th><th>Estado</th><th class="num">Pilha livre (bytes)</th><th class="num">CPU %</th></tr></thead><tbody id="tasks"></tbody></table></div></section>
+    <section class="card"><h2>Sensores: porta e slots, 24 h (% do minuto)</h2><div class="chart"><canvas id="cSens"></canvas></div></section>
+    <section class="card"><h2>Leituras NFC, 24 h</h2><div class="chart"><canvas id="cNfc"></canvas></div></section>
+    <section class="card"><h2>CPU, 24 h (%)</h2><div class="chart"><canvas id="cCpu24"></canvas></div></section>
+    <section class="card"><h2>Heap mínimo e RSSI, 24 h</h2><div class="chart"><canvas id="cNet24"></canvas></div></section>
+    <section class="card">
+      <h2>Energia</h2>
+      <dl id="power" style="margin-bottom:10px"></dl>
+      <div class="fields">
+        <label>Acordar por timer após (s)<input id="sleepSec" type="number" min="5" max="86400" value="30"></label>
+        <button id="btnLight">Light Sleep</button>
+        <button id="btnDeep" class="danger">Deep Sleep</button>
+      </div>
+      <p class="muted">Exige login no Admin. A porta (reed) também acorda o sistema.</p>
+    </section>
+    <section class="card">
+      <h2>Atualização OTA</h2>
+      <div class="fields"><label>Arquivo firmware.bin<input id="otaFile" type="file" accept=".bin"></label><button id="btnOta" class="primary">Enviar</button></div>
+      <div class="bar" style="margin-top:10px"><i id="otaBar"></i></div>
+      <p class="muted" id="otaText">Exige login no Admin e armário em repouso.</p>
+    </section>
+  </div>
+</main>
+<script src="js/chart.js"></script><script src="js/app.js"></script><script src="js/performance.js"></script>
+</body>
+</html>

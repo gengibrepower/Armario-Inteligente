@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armário · Sobre</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav></nav>
+<main>
+  <h1>Sobre o projeto</h1>
+  <div class="grid">
+    <section class="card"><h2>Trabalho</h2><dl id="info"></dl></section>
+    <section class="card"><h2>Integrantes</h2><table><thead><tr><th>Nome</th><th>E-mail</th></tr></thead><tbody id="team"></tbody></table></section>
+  </div>
+</main>
+<script src="js/app.js"></script>
+<script>
+api("/about.json").then((a) => {
+  const url = /^https?:\/\//.test(a.github) ? `<a href="${esc(a.github)}">${esc(a.github)}</a>` : esc(a.github);
+  $("info").innerHTML = [["Universidade", a.universidade], ["Escola", a.escola], ["Curso", a.curso], ["Disciplina", a.disciplina], ["Professor", a.professor], ["Período", a.periodo]]
+    .map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("") + `<dt>Repositório</dt><dd>${url}</dd>`;
+  $("team").innerHTML = a.integrantes.map((p) => `<tr><td>${esc(p.nome)}</td><td>${esc(p.email)}</td></tr>`).join("");
+}).catch((e) => toast(e.message));
+</script>
+</body>
+</html>

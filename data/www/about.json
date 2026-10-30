@@ -1,0 +1,13 @@
+{
+  "universidade": "Pontifícia Universidade Católica do Paraná (PUCPR)",
+  "escola": "Escola Politécnica",
+  "curso": "Engenharia de Software",
+  "disciplina": "Performance em Sistemas Ciberfísicos",
+  "professor": "Prof. Fábio Bettio",
+  "periodo": "2026/2",
+  "github": "PREENCHER: link do repositório",
+  "integrantes": [
+    { "nome": "PREENCHER: nome completo", "email": "PREENCHER: e-mail" },
+    { "nome": "PREENCHER: nome completo", "email": "PREENCHER: e-mail" }
+  ]
+}

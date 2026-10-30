@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armário · Admin</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav></nav>
+<main>
+  <h1>Administração</h1>
+
+  <section id="loginBox" class="card hide">
+    <h2>Entrar</h2>
+    <form id="loginForm" class="fields">
+      <label>Usuário<input name="user" value="admin" autocomplete="username" required></label>
+      <label>Senha<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary">Entrar</button>
+    </form>
+  </section>
+
+  <section id="passwordBox" class="card hide">
+    <h2>Troque a senha padrão para continuar</h2>
+    <form id="passwordForm" class="fields">
+      <label>Senha atual<input name="current" type="password" autocomplete="current-password" required></label>
+      <label>Nova senha (mín. 8 caracteres)<input name="next" type="password" minlength="8" autocomplete="new-password" required></label>
+      <button class="primary">Salvar senha</button>
+    </form>
+  </section>
+
+  <div id="app" class="hide">
+    <div class="tabs" id="tabs"></div>
+
+    <section data-tab="Usuários">
+      <div class="card" style="margin-bottom:14px">
+        <h2 id="userTitle">Novo usuário</h2>
+        <form id="userForm" class="fields">
+          <input type="hidden" name="id">
+          <label>Nome<input name="name" maxlength="31" required></label>
+          <label>Matrícula/RA<input name="ra" maxlength="15"></label>
+          <label>E-mail<input name="email" type="email" maxlength="39"></label>
+          <label>UID do cartão<input name="uid" maxlength="14" pattern="([0-9A-Fa-f]{2})*"></label>
+          <label class="check"><input name="active" type="checkbox" checked>Ativo</label>
+          <label class="check"><input name="admin" type="checkbox">Administrador</label>
+          <button class="primary">Salvar</button>
+          <button type="button" id="userReset">Limpar</button>
+          <button type="button" id="enrollBtn">Cadastrar cartão</button>
+        </form>
+        <p class="muted" id="enrollText"></p>
+      </div>
+      <div class="card">
+        <div class="row"><input id="userSearch" placeholder="Buscar por nome, RA ou UID"></div>
+        <div class="scroll"><table><thead><tr><th>Nome</th><th>RA</th><th>E-mail</th><th>UID</th><th>Situação</th><th>Perfil</th><th></th></tr></thead><tbody id="userRows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section data-tab="Slots">
+      <div class="card"><h2>Notebooks e slots</h2><form id="slotForm" class="fields"></form></div>
+    </section>
+
+    <section data-tab="Empréstimos">
+      <div class="card" style="margin-bottom:14px"><h2>Empréstimos ativos</h2><div class="scroll"><table><thead><tr><th>Slot</th><th>Usuário</th><th>Desde</th><th>Situação</th></tr></thead><tbody id="loanRows"></tbody></table></div></div>
+      <div class="card">
+        <h2>Histórico</h2>
+        <form id="historyForm" class="fields">
+          <label>De<input name="from" type="date"></label>
+          <label>Até<input name="to" type="date"></label>
+          <label>Usuário<select name="user"><option value="">Todos</option></select></label>
+          <label>Slot<select name="slot"><option value="">Todos</option><option>1</option><option>2</option></select></label>
+          <button class="primary">Filtrar</button>
+          <button type="button" id="historyCsv">Exportar CSV</button>
+        </form>
+        <div class="scroll" style="margin-top:10px"><table><thead><tr><th>Quando</th><th>Evento</th><th>Slot</th><th>Usuário</th><th>UID</th><th>Duração</th></tr></thead><tbody id="historyRows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section data-tab="Controle">
+      <div class="grid">
+        <div class="card"><h2>Controle manual</h2><div class="row" data-control>
+          <button data-action="unlock">Destrancar</button><button data-action="lock">Trancar</button><button data-action="silence" class="danger">Silenciar alarme</button>
+        </div><p class="muted" id="controlState"></p></div>
+        <div class="card"><h2>Modo diagnóstico</h2><div class="row" id="diag"></div><pre id="diagOut" class="muted"></pre></div>
+      </div>
+    </section>
+
+    <section data-tab="Configurações">
+      <form id="settingsForm">
+        <div class="grid">
+          <div class="card"><h2>Frequência de leitura</h2><div class="fields" id="fFreq"></div></div>
+          <div class="card"><h2>Operação</h2><div class="fields" id="fOp"></div></div>
+          <div class="card wide"><h2>Wi-Fi</h2>
+            <div class="row"><button type="button" id="scanBtn">Buscar redes</button><select id="scanList" class="hide"></select></div>
+            <div class="fields" id="fWifi"></div>
+            <p class="muted">Deixe a senha vazia para manter a atual. Se a rede falhar, o armário abre o ponto de acesso Armario-Setup.</p>
+          </div>
+          <div class="card"><h2>Hora</h2><div class="fields" id="fTime"></div></div>
+          <div class="card"><h2>Energia e acesso</h2><div class="fields" id="fPower"></div></div>
+        </div>
+        <button class="primary">Salvar configurações</button>
+      </form>
+      <div class="card" style="margin-top:14px"><h2>Senha do administrador</h2>
+        <form id="passwordForm2" class="fields">
+          <label>Senha atual<input name="current" type="password" required></label>
+          <label>Nova senha<input name="next" type="password" minlength="8" required></label>
+          <button>Alterar senha</button>
+        </form>
+      </div>
+    </section>
+
+    <section data-tab="Logs">
+      <div class="card">
+        <div class="row">
+          <select id="logLevel"><option value="">Todos os níveis</option><option value="0">ERROR</option><option value="1">WARN</option><option value="2">INFO</option></select>
+          <button id="logRefresh">Atualizar</button>
+          <a href="/api/logs?format=csv"><button>Exportar CSV</button></a>
+          <a href="/api/logs?format=json"><button>Exportar JSON</button></a>
+          <button id="logClear" class="danger">Limpar</button>
+        </div>
+        <div class="scroll"><table><thead><tr><th>Quando</th><th>Nível</th><th>Origem</th><th>Mensagem</th></tr></thead><tbody id="logRows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section data-tab="Sistema">
+      <div class="grid">
+        <div class="card"><h2>Backup</h2>
+          <p class="muted">Inclui configurações e usuários. Senhas não entram no arquivo.</p>
+          <div class="row"><a href="/api/backup"><button>Baixar backup</button></a></div>
+          <div class="row"><input id="restoreFile" type="file" accept=".json"><button id="restoreBtn">Restaurar</button></div>
+        </div>
+        <div class="card"><h2>Sessão e sistema</h2><div class="row"><button id="logoutBtn">Sair</button><button id="rebootBtn" class="danger">Reiniciar armário</button></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="js/app.js"></script><script src="js/admin.js"></script>
+</body>
+</html>
