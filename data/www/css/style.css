@@ -55,4 +55,8 @@ form.fields, .fields { display: grid; gap: 10px; grid-template-columns: repeat(a
 #toast { position: fixed; right: 16px; bottom: 16px; max-width: min(380px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); opacity: 0; pointer-events: none; transition: opacity .2s; }
 #toast.show { opacity: 1; }
 .muted { color: var(--muted); }
+.banner { margin: 0 0 14px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); font-weight: 600; }
+.banner.ok { color: var(--ok); } .banner.warn { color: var(--warn); } .banner.bad { color: var(--bad); border-color: var(--bad); }
+.slot p { margin: 4px 0 0; }
+.slot .who { margin-top: 8px; font-size: 20px; font-weight: 600; }
 pre { white-space: pre-wrap; margin: 0; }

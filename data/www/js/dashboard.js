@@ -1,62 +1,90 @@
-const STATE_TEXT = { IDLE: "Repouso", AUTHORIZED: "Destrancado", DOOR_OPEN: "Porta em uso", CLOSING: "Trancando", ALARM: "Alarme", ENROLL: "Cadastro de cartão" };
-const WEEK = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+// Tela simples para quem usa o armário: quem está com cada notebook e o que já voltou.
+const BANNER = {
+  AUTHORIZED: ["ok", "Cartão aceito. Pode abrir a porta."],
+  DOOR_OPEN: ["warn", "Porta aberta. Ao fechar, a retirada ou devolução é registrada."],
+  CLOSING: ["warn", "Trancando..."],
+  ALARM: ["bad", "Alarme! Feche a porta do armário."],
+  ENROLL: ["warn", "Cadastro de cartão em andamento."],
+};
 
-const charts = {
-  hour: lineChart("cHour", [{ data: [], backgroundColor: COLORS[0] }], { type: "bar" }),
-  day: lineChart("cDay", [{ data: [], backgroundColor: COLORS[1] }], { type: "bar" }),
-  d1: lineChart("c24", [{ data: [], borderColor: COLORS[0], stepped: true }], { max: 2 }),
-  d7: lineChart("c7d", [{ data: [], borderColor: COLORS[2] }], { max: 2, maxTicks: 5 }),
+let last = null;
+
+const notebookName = (slotId) => {
+  const slot = last?.slots.find((s) => s.id === slotId);
+  return slot?.asset ? `${esc(slot.asset)} <span class="muted">(slot ${slotId})</span>` : `Slot ${slotId}`;
 };
 
 function renderState(s) {
-  const alarm = s.state === "ALARM" ? ` (${s.alarm.replace("_", " ").toLowerCase()})` : "";
-  $("status").innerHTML = `
-    <dt>Sistema</dt><dd><span class="tag ${s.state === "ALARM" ? "bad" : "ok"}">${STATE_TEXT[s.state] || s.state}${esc(alarm)}</span></dd>
-    <dt>Porta</dt><dd>${s.doorOpen ? "Aberta" : "Fechada"}</dd>
-    <dt>Tranca</dt><dd>${s.locked ? "Trancada" : "Destrancada"}</dd>
-    <dt>Relógio</dt><dd>${s.timeSynced ? fmtTime(s.now, true) : "Sem hora sincronizada"}</dd>`;
+  last = s;
+  const [kind, text] = BANNER[s.state] || ["ok", s.locked ? "Armário trancado. Aproxime o cartão para retirar ou devolver." : "Armário destrancado."];
+  $("banner").className = `banner ${kind}`;
+  $("banner").textContent = text;
   $("slots").innerHTML = s.slots.map((slot) => {
-    const name = slot.asset ? `${slot.id} · ${esc(slot.asset)}` : slot.id;
-    const stateTag = slot.maintenance ? `<span class="tag warn">Manutenção</span>`
-      : slot.occupied ? `<span class="tag ok">Disponível</span>`
-      : `<span class="tag ${slot.overdue ? "bad" : "warn"}">${slot.overdue ? "Emprestado (vencido)" : "Emprestado"}</span>`;
-    return `<tr><td>${name}</td><td>${stateTag}</td><td>${esc(slot.loan?.user ?? "—")}</td><td>${slot.loan ? fmtTime(slot.loan.since, slot.loan.synced) : "—"}</td></tr>`;
+    let body;
+    if (slot.maintenance) body = `<span class="tag warn">Em manutenção</span>`;
+    else if (slot.occupied) body = `<span class="tag ok">Disponível</span>`;
+    else if (slot.loan) body = `<span class="tag ${slot.overdue ? "bad" : "warn"}">${slot.overdue ? "Em uso, prazo vencido" : "Em uso"}</span>
+      <p class="who">${esc(slot.loan.user)}</p><p class="muted">desde ${fmtTime(slot.loan.since, slot.loan.synced)}</p>`;
+    else body = `<span class="tag warn">Fora do slot</span>`;
+    return `<section class="card slot"><h2>${notebookName(slot.id)}</h2>${body}</section>`;
   }).join("");
 }
 
-async function loadUsage() {
-  const u = await api("/api/usage");
-  const kpi = (value, label) => `<div class="kpi"><b>${value}</b><span>${label}</span></div>`;
-  $("kpis").innerHTML = kpi(`${u.occupancyPct}%`, "Taxa de ocupação") + kpi(fmtDuration(u.avgLoanSec), "Tempo médio de empréstimo")
-    + kpi(u.withdrawals, "Retiradas") + kpi(u.returns, "Devoluções") + kpi(u.denied, "Acessos negados") + kpi(u.violations, "Violações");
-  setChart(charts.hour, u.perHour.map((_, h) => `${pad(h)}h`), u.perHour);
-  setChart(charts.day, WEEK, u.perWeekday);
-  $("ranking").innerHTML = u.ranking.map((r) => `<tr><td>${esc(r.name)}</td><td class="num">${r.count}</td></tr>`).join("") || `<tr><td class="muted" colspan="2">Sem retiradas registradas</td></tr>`;
+// O firmware grava a retirada e a devolução como eventos separados. Lendo do mais
+// novo para o mais antigo, cada devolução fica pendente até achar a retirada do mesmo slot.
+// Só a retirada mais recente de um slot pode estar em uso; as antigas sem par foram
+// encerradas por violação (notebook reposto sem cartão).
+function pairLoans(events) {
+  const rows = [];
+  const waiting = {};
+  const seen = {};
+  for (const e of events) {
+    if (e.type !== "retirada" && e.type !== "devolucao") continue;
+    const latest = !seen[e.slot];
+    seen[e.slot] = true;
+    if (e.type === "devolucao") {
+      const row = { user: e.user, slot: e.slot, back: e, out: e.dur ? { ts: e.ts - e.dur, synced: e.synced } : null };
+      waiting[e.slot] = row;
+      rows.push(row);
+    } else {
+      const row = waiting[e.slot];
+      if (row) {
+        row.out = e;
+        row.user = e.user || row.user;
+        delete waiting[e.slot];
+      } else {
+        rows.push({ user: e.user, slot: e.slot, out: e, back: null, latest });
+      }
+    }
+  }
+  return rows;
 }
 
-async function loadEvents() {
-  const list = await api("/api/events?limit=12");
-  $("events").innerHTML = list.map((e) => `<tr><td>${fmtTime(e.ts, e.synced)}</td><td>${esc(e.type)}</td><td>${e.slot || "—"}</td><td>${esc(e.user || "—")}</td></tr>`).join("") || `<tr><td class="muted" colspan="4">Sem eventos</td></tr>`;
+function renderLoans(events) {
+  const rows = pairLoans(events);
+  $("loans").innerHTML = rows.map((r) => {
+    const open = r.latest && last?.slots.find((s) => s.id === r.slot)?.loan;
+    const status = r.back ? `<span class="tag ok">Devolvido</span>`
+      : open ? `<span class="tag warn">Em uso</span>`
+      : `<span class="tag">Encerrado</span>`;
+    return `<tr><td>${esc(r.user || "—")}</td><td>${notebookName(r.slot)}</td>
+      <td>${r.out ? fmtTime(r.out.ts, r.out.synced) : "—"}</td><td>${r.back ? fmtTime(r.back.ts, r.back.synced) : "—"}</td><td>${status}</td></tr>`;
+  }).join("") || `<tr><td class="muted" colspan="5">Nenhuma retirada registrada</td></tr>`;
 }
 
-async function loadHistory() {
-  const minutes = await api("/api/history/minutes?step=5");
-  setChart(charts.d1, minutes.map((m) => fmtTime(m[0], m[1] & 1, true)), minutes.map((m) => (200 - m[3] - m[4]) / 100));
-  const hours = await api("/api/history/hours");
-  setChart(charts.d7, hours.map((h) => fmtTime(h[0], h[1] & 1)), hours.map((h) => h[2] / 50));
-}
+const loadLoans = () => api("/api/events?limit=60").then(renderLoans);
 
 function refresh() {
-  api("/api/state").then(renderState).catch((e) => toast(e.message));
-  Promise.all([loadUsage(), loadEvents(), loadHistory()]).catch((e) => toast(e.message));
+  api("/api/state").then(renderState).then(loadLoans).catch((e) => toast(e.message));
 }
 
+// O evento vai para a flash por uma fila; esperar um pouco evita ler antes de gravar.
+let reloadTimer;
 connectSocket((msg) => {
   if (msg.t !== "state") return;
   renderState(msg);
-  // Mudou a porta ou um slot: um evento pode ter sido gravado.
-  loadEvents().catch(() => {});
-  loadUsage().catch(() => {});
+  clearTimeout(reloadTimer);
+  reloadTimer = setTimeout(() => loadLoans().catch(() => {}), 1000);
 });
 refresh();
-setInterval(refresh, 300000);
+setInterval(refresh, 60000);
