@@ -2,6 +2,11 @@
 
 Segue [versionamento semântico](https://semver.org/lang/pt-BR/). A versão 1.0.0 fica reservada para depois da validação em hardware.
 
+## 0.9.0 — 2026-11-03
+
+- Dashboard simplificado: notebooks, quem retirou, horários e devoluções ao vivo
+- Página Estatísticas (só administrador): médias por dia, uso por semana, quem mais usa e tempo por pessoa
+
 ## 0.8.0 — 2026-10-30
 
 - Testes unitários da lógica pura

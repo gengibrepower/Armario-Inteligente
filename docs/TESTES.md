@@ -48,7 +48,9 @@ Preencha **Resultado** e **Evidência** (print, foto ou medição). A coluna Dia
 | W1 | Primeiro acesso em AP | Portal abre; troca de senha é obrigatória | | |
 | W2 | Trocar Wi-Fi pela web | Conecta sem regravar | | |
 | W3 | Senha de Wi-Fi errada | Cai em AP `Armario-Setup` | | |
-| W4 | Dashboard ao vivo | Porta muda na tela sem recarregar | | |
+| W4 | Dashboard ao vivo | Aviso da porta muda na tela sem recarregar; retirada aparece com nome, notebook e horário | | |
+| W4b | Devolver com o cartão e fechar a porta | Linha passa a "Devolvido" com horário, sem recarregar | | |
+| W4c | Estatísticas sem login / com login | Sem login pede para entrar no Admin; com login mostra médias, semanas e ranking | | |
 | W5 | Performance | CPU, memória, tasks e funções atualizam | | |
 | W6 | Sem internet (modo AP) | Gráficos funcionam | | |
 | W7 | Alterar leitura NFC e tempos | Vale sem reiniciar | | |
