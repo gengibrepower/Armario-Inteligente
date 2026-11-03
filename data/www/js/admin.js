@@ -43,7 +43,7 @@ const sections = [...document.querySelectorAll("[data-tab]")];
 function openTab(name) {
   sections.forEach((s) => show(s, s.dataset.tab === name));
   [...$("tabs").children].forEach((b) => b.classList.toggle("on", b.textContent === name));
-  ({ "Usuários": loadUsers, "Empréstimos": loadLoans, "Logs": loadLogs, "Configurações": loadSettings, "Slots": loadSlots })[name]?.();
+  ({ "Usuários": loadUsers, "Empréstimos": loadLoans, "Logs": loadLogs, "Configurações": loadSettings, "Slots": loadSlots })[name]?.()?.catch?.((e) => toast(e.message));
 }
 $("tabs").innerHTML = sections.map((s) => `<button>${s.dataset.tab}</button>`).join("");
 [...$("tabs").children].forEach((b) => (b.onclick = () => openTab(b.textContent)));

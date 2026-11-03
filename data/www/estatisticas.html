@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Armário · Estatísticas</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav></nav>
+<main>
+  <h1>Estatísticas de uso</h1>
+  <section id="needLogin" class="card hide"><h2>Área do administrador</h2><p>Faça login na página <a href="admin.html">Admin</a> para ver as estatísticas.</p></section>
+  <div id="app" class="hide">
+    <section class="card" style="margin-bottom:14px"><div class="kpis" id="kpis"></div><p class="muted" id="period"></p></section>
+    <div class="grid">
+      <section class="card wide"><h2>Retiradas e notebooks usados por dia (14 dias)</h2><div class="chart"><canvas id="cPerDay"></canvas></div></section>
+      <section class="card"><h2>Retiradas por semana</h2><div class="chart"><canvas id="cWeek"></canvas></div></section>
+      <section class="card"><h2>Retiradas por dia da semana</h2><div class="chart"><canvas id="cWeekday"></canvas></div></section>
+      <section class="card"><h2>Horas de uso por dia</h2><div class="chart"><canvas id="cHours"></canvas></div></section>
+      <section class="card"><h2>Retiradas por hora do dia</h2><div class="chart"><canvas id="cHour"></canvas></div></section>
+      <section class="card"><h2>Quem mais usa</h2><div class="chart"><canvas id="cTop"></canvas></div></section>
+      <section class="card"><h2>Tempo de uso por pessoa</h2>
+        <div class="scroll"><table><thead><tr><th>Usuário</th><th class="num">Retiradas</th><th class="num">Tempo total</th><th class="num">Tempo médio</th></tr></thead><tbody id="perUser"></tbody></table></div>
+      </section>
+      <section class="card wide"><h2>Notebooks em uso: 7 dias</h2><div class="chart"><canvas id="c7d"></canvas></div></section>
+    </div>
+  </div>
+</main>
+<script src="js/chart.js"></script><script src="js/app.js"></script><script src="js/estatisticas.js"></script>
+</body>
+</html>

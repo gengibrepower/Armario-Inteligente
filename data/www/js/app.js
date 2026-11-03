@@ -1,6 +1,6 @@
 // Funções comuns: menu, API, WebSocket e formatação. Texto vindo do armário só
 // entra na página por esc() ou textContent, pois nomes são digitados por pessoas.
-const PAGES = [["index.html", "Dashboard"], ["performance.html", "Performance"], ["admin.html", "Admin"], ["sobre.html", "Sobre"], ["changelog.html", "Changelog"]];
+const PAGES = [["index.html", "Dashboard"], ["estatisticas.html", "Estatísticas"], ["performance.html", "Performance"], ["admin.html", "Admin"], ["sobre.html", "Sobre"], ["changelog.html", "Changelog"]];
 
 function renderNav() {
   const here = location.pathname.split("/").pop() || "index.html";
