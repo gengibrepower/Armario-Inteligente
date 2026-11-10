@@ -17,14 +17,16 @@ Detalhes em [docs/ARQUITETURA.md](docs/ARQUITETURA.md).
 
 | Componente | GPIO | Observações |
 |---|---|---|
-| PN532 SCK / MISO / MOSI / SS | 18 / 19 / 23 / 4 | Coloque as chaves do módulo em **modo SPI** |
+| PN532 SCK / MISO / MOSI / SS | 18 / 19 / 23 / 5 | Coloque as chaves do módulo em **modo SPI** (1 OFF, 2 ON) |
 | OLED SDA / SCL | 21 / 22 | I²C, endereço 0x3C |
 | Servo (sinal) | 13 | Alimentação 5 V com capacitor de 1000 µF |
 | Reed da porta | 25 | Entre GPIO e GND; fechado com a porta fechada |
-| Microswitch slot 1 / 2 | 26 / 27 | C no GND, NA no GPIO |
-| LED verde / vermelho | 32 / 33 | Resistor de 330 Ω |
-| Buzzer | 14 | Base do BC547 por 1 kΩ; buzzer ativo de 5 V no coletor |
-| Segundo atuador | 16 | **Pendente**, ver abaixo |
+| Microswitch slot 1 / 2 | 16 / 17 | C no GND, NA no GPIO |
+| LED verde / vermelho | 2 / 15 | Resistor de 330 Ω; o LED azul da placa acende junto com o verde |
+| Buzzer | 27 | Base do BC547 por 1 kΩ; buzzer ativo de 5 V no coletor |
+| Segundo atuador | 4 | **Pendente**, ver abaixo |
+
+Quase tudo fica do lado do 3V3 do DevKit de 30 pinos. Do lado do VIN ficam só o servo e o buzzer, que já usam o 5 V do VIN. Não ligue nada no GPIO 12: nível alto nele no boot muda a tensão da flash e a placa não inicia.
 
 ```mermaid
 flowchart LR
@@ -32,11 +34,11 @@ flowchart LR
   ESP -- SPI --> NFC[PN532]
   ESP -- I2C --> OLED[SSD1306]
   ESP -- PWM 50 Hz --> SERVO[SG90]
-  ESP -- GPIO 14 --> Q[BC547] --> BUZ[Buzzer 5 V]
-  ESP -- GPIO 32/33 --> LEDS[LEDs]
-  ESP -- GPIO 16 --> AUX[Atuador 2]
+  ESP -- GPIO 27 --> Q[BC547] --> BUZ[Buzzer 5 V]
+  ESP -- GPIO 2/15 --> LEDS[LEDs]
+  ESP -- GPIO 4 --> AUX[Atuador 2]
   REED[Reed] -- GPIO 25 --> ESP
-  SW[Microswitches] -- GPIO 26/27 --> ESP
+  SW[Microswitches] -- GPIO 16/17 --> ESP
 ```
 
 Todos os GNDs precisam ser comuns. Não alimente o servo pelo pino de 3,3 V.
@@ -75,7 +77,7 @@ pio test -e native
 
 | Item | Responsável |
 |---|---|
-| **Confirmar o segundo atuador com a equipe.** O TDE exige dois atuadores que não sejam LED nem buzzer, e só o servo existe. O firmware já aciona um relé (iluminação/cooler) no GPIO 16 enquanto a porta está aberta; `AUX_ACTUATOR_ENABLED` e `AUX_ACTIVE_LEVEL` ficam em `include/config.h`. | Equipe |
+| **Confirmar o segundo atuador com a equipe.** O TDE exige dois atuadores que não sejam LED nem buzzer, e só o servo existe. O firmware já aciona um relé (iluminação/cooler) no GPIO 4 enquanto a porta está aberta; `AUX_ACTUATOR_ENABLED` e `AUX_ACTIVE_LEVEL` ficam em `include/config.h`. | Equipe |
 | Executar `docs/TESTES.md` e anexar as evidências | Equipe |
 | Ajustar ângulos do servo e conferir a polaridade do reed (o KY-025 pode inverter a lógica) | Equipe |
 | Preencher nomes, e-mails e GitHub em `data/www/about.json` | Equipe |
