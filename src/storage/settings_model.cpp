@@ -223,15 +223,15 @@ void settingsToJson(const Settings& s, JsonObject out, bool includeSecrets) {
   out["closeHour"] = s.closeHour;
   out["maxLoanHours"] = s.maxLoanHours;
   out["eventRetentionDays"] = s.eventRetentionDays;
-  out["wifiSsid"] = s.wifiSsid;
-  if (includeSecrets) out["wifiPass"] = s.wifiPass;
+  out["wifiSsid"] = static_cast<const char*>(s.wifiSsid);
+  if (includeSecrets) out["wifiPass"] = static_cast<const char*>(s.wifiPass);
   out["staticIp"] = s.staticIp;
-  out["ip"] = s.ip;
-  out["gateway"] = s.gateway;
-  out["subnet"] = s.subnet;
-  out["dns"] = s.dns;
-  out["timezone"] = s.timezone;
-  out["ntpServer"] = s.ntpServer;
+  out["ip"] = static_cast<const char*>(s.ip);
+  out["gateway"] = static_cast<const char*>(s.gateway);
+  out["subnet"] = static_cast<const char*>(s.subnet);
+  out["dns"] = static_cast<const char*>(s.dns);
+  out["timezone"] = static_cast<const char*>(s.timezone);
+  out["ntpServer"] = static_cast<const char*>(s.ntpServer);
   out["cpuMhz"] = s.cpuMhz;
   out["modemSleep"] = s.modemSleep;
   out["autoEco"] = s.autoEco;
@@ -239,7 +239,7 @@ void settingsToJson(const Settings& s, JsonObject out, bool includeSecrets) {
   JsonArray slots = out["slots"].to<JsonArray>();
   for (size_t i = 0; i < SLOT_COUNT; i++) {
     JsonObject slot = slots.add<JsonObject>();
-    slot["asset"] = s.slotAsset[i];
+    slot["asset"] = static_cast<const char*>(s.slotAsset[i]);
     slot["maintenance"] = s.slotMaintenance[i];
   }
 }

@@ -43,7 +43,9 @@ void stateToJson(JsonObject out) {
   out["alarm"] = alarmName(static_cast<uint8_t>(s.alarm));
   out["silenced"] = s.alarmSilenced;
   out["locked"] = s.locked;
-  out["user"] = s.sessionUser;
+  // ArduinoJson 7 guarda um const char[N] como literal: só o ponteiro, com N-1 bytes,
+  // lixo após o \0 incluso. O cast faz copiar até o \0, e a cópia local pode sair de escopo.
+  out["user"] = static_cast<const char*>(s.sessionUser);
   out["timeSynced"] = timebase::synced();
   uint8_t flags = 0;
   out["now"] = timebase::now(&flags);
@@ -53,12 +55,12 @@ void stateToJson(JsonObject out) {
     JsonObject slot = slots.add<JsonObject>();
     slot["id"] = i + 1;
     slot["occupied"] = s.slotOccupied[i];
-    slot["asset"] = cfg.slotAsset[i];
+    slot["asset"] = static_cast<const char*>(cfg.slotAsset[i]);
     slot["maintenance"] = cfg.slotMaintenance[i];
     slot["overdue"] = s.overdue[i];
     if (s.loans[i].active) {
       JsonObject loan = slot["loan"].to<JsonObject>();
-      loan["user"] = s.loans[i].userName;
+      loan["user"] = static_cast<const char*>(s.loans[i].userName);
       loan["since"] = s.loans[i].since;
       loan["synced"] = (s.loans[i].flags & REC_TIME_SYNCED) != 0;
     }

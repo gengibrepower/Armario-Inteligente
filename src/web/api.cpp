@@ -322,7 +322,7 @@ void routeUsers() {
     JsonVariant root = response->getRoot();
     root["active"] = s.state == LockerState::Enroll;
     root["captureId"] = s.enrollCaptureId;
-    root["uid"] = s.lastUid;
+    root["uid"] = static_cast<const char*>(s.lastUid);
     response->setLength();
     req->send(response);
   });
