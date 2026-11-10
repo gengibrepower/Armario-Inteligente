@@ -43,23 +43,59 @@ Todos os GNDs precisam ser comuns. Não alimente o servo pelo pino de 3,3 V.
 
 ## Como compilar e gravar
 
-Requer PlatformIO. Na primeira vez, as dependências são baixadas sozinhas.
+Requer PlatformIO. Na primeira vez, o toolchain e as bibliotecas são baixados sozinhos, nas versões fixadas no `platformio.ini`.
+
+### Preparar o PC (uma vez só)
+
+Arch:
 
 ```bash
-cd ~/Documentos/armario-inteligente
+sudo pacman -S --needed git python python-pipx gcc
+pipx install platformio && pipx ensurepath
+sudo usermod -aG uucp $USER   # acesso à porta serial; saia e entre de novo na sessão
+```
+
+Fedora:
+
+```bash
+sudo dnf install git pipx gcc-c++
+pipx install platformio && pipx ensurepath
+sudo usermod -aG dialout $USER   # acesso à porta serial; saia e entre de novo na sessão
+```
+
+Baixar o código:
+
+```bash
+git clone https://github.com/gengibrepower/Armario-Inteligente
+cd Armario-Inteligente
+git switch pinagem-nova-sem-porta
+```
+
+Se a placa não aparecer em `/dev/ttyUSB0` ou `/dev/ttyACM0`, troque o cabo: muitos cabos USB só carregam e não transmitem dados.
+
+### Compilar, gravar e acompanhar
+
+```bash
 pio run                  # compila o firmware
 pio run -t upload        # grava o firmware
 pio run -t uploadfs      # grava as páginas web
 pio device monitor       # acompanha os logs pela USB
 ```
 
+Se houver mais de uma porta serial, indique qual: `pio run -t upload --upload-port /dev/ttyUSB0`. Em caso de crash, o monitor já mostra o backtrace com arquivo e linha (`esp32_exception_decoder`).
+
 **Atenção:** `uploadfs` substitui a partição inteira e **apaga usuários, logs e histórico**. Antes de regravar um armário em uso, baixe o backup em Admin → Sistema. Atualizações de firmware pela aba Performance (OTA) preservam esses dados.
 
 ### Testes unitários
 
 ```bash
-sudo dnf install gcc-c++   # uma vez só; os testes rodam no PC
-pio test -e native
+pio test -e native   # roda no PC, sem placa; usa o gcc instalado acima
+```
+
+### Build de demonstração
+
+```bash
+pio run -e esp32dev-sim -t upload   # grava 24 h de histórico fictício no primeiro boot
 ```
 
 ## Primeiro acesso
