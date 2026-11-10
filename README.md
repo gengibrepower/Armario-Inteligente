@@ -20,7 +20,6 @@ Detalhes em [docs/ARQUITETURA.md](docs/ARQUITETURA.md).
 | PN532 SCK / MISO / MOSI / SS | 18 / 19 / 23 / 5 | Coloque as chaves do módulo em **modo SPI** (1 OFF, 2 ON) |
 | OLED SDA / SCL | 21 / 22 | I²C, endereço 0x3C |
 | Servo (sinal) | 13 | Alimentação 5 V com capacitor de 1000 µF |
-| Reed da porta | 25 | Entre GPIO e GND; fechado com a porta fechada |
 | Microswitch slot 1 / 2 | 16 / 17 | C no GND, NA no GPIO |
 | LED verde / vermelho | 2 / 15 | Resistor de 330 Ω; o LED azul da placa acende junto com o verde |
 | Buzzer | 27 | Base do BC547 por 1 kΩ; buzzer ativo de 5 V no coletor |
@@ -37,7 +36,6 @@ flowchart LR
   ESP -- GPIO 27 --> Q[BC547] --> BUZ[Buzzer 5 V]
   ESP -- GPIO 2/15 --> LEDS[LEDs]
   ESP -- GPIO 4 --> AUX[Atuador 2]
-  REED[Reed] -- GPIO 25 --> ESP
   SW[Microswitches] -- GPIO 16/17 --> ESP
 ```
 
@@ -77,9 +75,9 @@ pio test -e native
 
 | Item | Responsável |
 |---|---|
-| **Confirmar o segundo atuador com a equipe.** O TDE exige dois atuadores que não sejam LED nem buzzer, e só o servo existe. O firmware já aciona um relé (iluminação/cooler) no GPIO 4 enquanto a porta está aberta; `AUX_ACTUATOR_ENABLED` e `AUX_ACTIVE_LEVEL` ficam em `include/config.h`. | Equipe |
+| **Confirmar o segundo atuador com a equipe.** O TDE exige dois atuadores que não sejam LED nem buzzer, e só o servo existe. O firmware já aciona um relé (iluminação/cooler) no GPIO 4 enquanto o armário está destrancado; `AUX_ACTUATOR_ENABLED` e `AUX_ACTIVE_LEVEL` ficam em `include/config.h`. | Equipe |
 | Executar `docs/TESTES.md` e anexar as evidências | Equipe |
-| Ajustar ângulos do servo e conferir a polaridade do reed (o KY-025 pode inverter a lógica) | Equipe |
+| Ajustar os ângulos do servo e os tempos de sessão na bancada | Equipe |
 | Preencher nomes, e-mails e GitHub em `data/www/about.json` | Equipe |
 | Conferir pilhas das tasks pelo high water mark e reduzir as folgadas | Equipe |
 
@@ -87,7 +85,8 @@ pio test -e native
 
 - **HTTP sem TLS:** login e cookie trafegam sem criptografia. Use em rede controlada.
 - **Dados pessoais:** com "Dashboard e Performance públicas" ligado, quem acessar a rede vê nomes de usuários. Desligue essa opção se o uso exigir, considerando a LGPD.
-- **Dormindo, o cartão não acorda o armário:** só a porta e o timer acordam. Durante o sono ninguém consegue retirar notebooks.
+- **Sem sensor de porta:** a sessão é uma janela de tempo depois do cartão. Não há alarme de porta esquecida aberta nem de arrombamento; uma porta forçada só é detectada se um slot mudar.
+- **Dormindo, o cartão não acorda o armário:** no Light Sleep, só o timer e uma mudança de slot acordam; no Deep Sleep, só o timer, e um slot mexido durante esse sono não vira violação. Durante o sono ninguém consegue retirar notebooks.
 - **Modo econômico automático:** reduz a CPU a 80 MHz fora do horário; não liga o modem sleep.
 - **Backup sem segredos:** não leva a senha do Wi-Fi nem a do admin.
 - **Volume do bipe:** o buzzer é ativo, então o PWM apenas recorta o som; o efeito precisa ser avaliado na bancada.

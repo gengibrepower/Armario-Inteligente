@@ -19,8 +19,6 @@
 namespace {
 const char* wakeCauseText(esp_sleep_wakeup_cause_t cause) {
   switch (cause) {
-    case ESP_SLEEP_WAKEUP_EXT0:
-      return "reed (porta)";
     case ESP_SLEEP_WAKEUP_TIMER:
       return "timer";
     default:
@@ -47,7 +45,7 @@ void setup() {
   cpuusage::begin();
   perfmem::begin();
   const esp_sleep_wakeup_cause_t wake = esp_sleep_get_wakeup_cause();
-  tasks::startAll(wake == ESP_SLEEP_WAKEUP_EXT0);
+  tasks::startAll();
 
   LOG_INFO("boot", "Firmware %s, reset %d", FW_VERSION, (int)esp_reset_reason());
   if (const char* text = wakeCauseText(wake)) {

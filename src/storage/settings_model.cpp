@@ -97,7 +97,6 @@ void settingsDefaults(Settings& s) {
   s.nfcPollMs = 200;
   s.unlockSec = 15;
   s.relockDelaySec = 3;
-  s.maxDoorOpenSec = 120;
   s.servoLockedDeg = 0;
   s.servoUnlockedDeg = 90;
   s.beepVolume = 100;
@@ -140,7 +139,6 @@ bool settingsSanitize(Settings& s) {
   within(s.nfcPollMs, 50, 2000, d.nfcPollMs);
   within(s.unlockSec, 3, 120, d.unlockSec);
   within(s.relockDelaySec, 1, 60, d.relockDelaySec);
-  within(s.maxDoorOpenSec, 10, 1800, d.maxDoorOpenSec);
   within(s.servoLockedDeg, 0, 180, d.servoLockedDeg);
   within(s.servoUnlockedDeg, 0, 180, d.servoUnlockedDeg);
   within(s.beepVolume, 0, 100, d.beepVolume);
@@ -164,7 +162,6 @@ bool settingsApplyJson(JsonObjectConst in, Settings& s, char* err, size_t errLen
   p.number("nfcPollMs", next.nfcPollMs, 50, 2000);
   p.number("unlockSec", next.unlockSec, 3, 120);
   p.number("relockDelaySec", next.relockDelaySec, 1, 60);
-  p.number("maxDoorOpenSec", next.maxDoorOpenSec, 10, 1800);
   p.number("servoLockedDeg", next.servoLockedDeg, 0, 180);
   p.number("servoUnlockedDeg", next.servoUnlockedDeg, 0, 180);
   p.number("beepVolume", next.beepVolume, 0, 100);
@@ -217,7 +214,6 @@ void settingsToJson(const Settings& s, JsonObject out, bool includeSecrets) {
   out["nfcPollMs"] = s.nfcPollMs;
   out["unlockSec"] = s.unlockSec;
   out["relockDelaySec"] = s.relockDelaySec;
-  out["maxDoorOpenSec"] = s.maxDoorOpenSec;
   out["servoLockedDeg"] = s.servoLockedDeg;
   out["servoUnlockedDeg"] = s.servoUnlockedDeg;
   out["beepVolume"] = s.beepVolume;

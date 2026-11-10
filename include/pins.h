@@ -19,9 +19,6 @@
 // Servo da tranca (LEDC a 50 Hz)
 #define PIN_SERVO 13
 
-// GPIO 25 é RTC GPIO: é o único sensor usado como fonte de wake-up.
-#define PIN_REED_DOOR 25
-
 // Microswitches: C ao GND, NA ao GPIO. Pressionado (notebook presente) = LOW.
 // GPIO 16/17 ficam livres porque o módulo WROOM-32 não tem PSRAM.
 #define PIN_SLOT_1 16
