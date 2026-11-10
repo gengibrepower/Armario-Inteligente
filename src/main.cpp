@@ -6,6 +6,7 @@
 
 #include "core/shared_state.h"
 #include "core/usage_store.h"
+#include "dev/simulate_24h.h"
 #include "perf/cpu_usage.h"
 #include "perf/memory.h"
 #include "power/power.h"
@@ -39,6 +40,9 @@ void setup() {
   setenv("TZ", settings::get().timezone, 1);
   tzset();
   const bool usersOk = users::begin();
+#ifdef SIMULATE_24H
+  devsim::run();
+#endif
   usage::begin();
 
   power::begin();
