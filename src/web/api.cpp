@@ -491,6 +491,9 @@ void registerApi(AsyncWebServer& server) {
   publicGet("/api/state", [](AsyncWebServerRequest* req) {
     auto* response = new AsyncJsonResponse();
     stateToJson(response->getRoot().to<JsonObject>());
+    // DIAGNOSTICO TEMPORARIO
+    Serial.printf("[DIAG] /api/state %u bytes, heap %u\n", (unsigned)measureJson(response->getRoot()),
+                  (unsigned)heap_caps_get_free_size(MALLOC_CAP_8BIT));
     response->setLength();
     req->send(response);
   });
